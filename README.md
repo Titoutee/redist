@@ -1,7 +1,6 @@
 # redist as in "Redist in Rust"
----
+
 redist is a minimalist, console-handled Redis server, implementing most of **RESP** protocol.
----
 
 ## Commands
 
