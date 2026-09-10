@@ -1,0 +1,1 @@
+A tiny python client for Redis. Mostly used for testing.
