@@ -40,9 +40,9 @@ pub enum RedisValueRef {
     ErrorMsg(Vec<u8>), // This is not a RESP type. This is an redis-oxide internal error type.
 }
 
-#[allow(dead_code)]
+// #[allow(dead_code)]
 impl RedisBufSplit {
-    fn redis_value(self, buf: &Bytes) -> RedisValueRef {
+    pub fn redis_value(self, buf: &Bytes) -> RedisValueRef {
         match self {
             // bfs is BufSplit(start, end), which has the as_bytes method defined above
             RedisBufSplit::String(bfs) => RedisValueRef::String(bfs.as_bytes(buf)),
@@ -55,11 +55,6 @@ impl RedisBufSplit {
             RedisBufSplit::Int(i) => RedisValueRef::Int(i),
         }
     }
-}
-
-pub trait Decoder {
-    type Item;
-    fn decode(&mut self, src: &BytesMut) -> Self::Item;
 }
 
 pub mod parse {
