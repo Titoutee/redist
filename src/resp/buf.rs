@@ -25,6 +25,7 @@ pub enum RedisBufSplit {
     Error(BufSplit),
     Int(i64),
     Array(Vec<RedisBufSplit>),
+    BulkString(BufSplit),
     NullArray,
     NullBulkString,
 }
@@ -35,6 +36,7 @@ pub enum RedisValueRef {
     Error(Bytes),
     Int(i64),
     Array(Vec<RedisValueRef>),
+    BulkString(Bytes),
     NullArray,
     NullBulkString,
     ErrorMsg(Vec<u8>), // This is not a RESP type. This is an redis-oxide internal error type.
@@ -53,6 +55,20 @@ impl RedisBufSplit {
             RedisBufSplit::NullArray => RedisValueRef::NullArray,
             RedisBufSplit::NullBulkString => RedisValueRef::NullBulkString,
             RedisBufSplit::Int(i) => RedisValueRef::Int(i),
+            RedisBufSplit::BulkString(bfs) => RedisValueRef::BulkString(bfs.as_bytes(buf)),
+        }
+    }
+}
+
+impl RedisValueRef {
+    pub fn serialize(self) -> String {
+        match self {
+            RedisValueRef::String(b) => format!("+{}\r\n", String::from_utf8(b.to_vec()).unwrap()),
+            RedisValueRef::BulkString(b) => {
+                let string = String::from_utf8(b.to_vec()).unwrap();
+                format!("${}\r\n{}\r\n", string.len(), string)
+            }
+            _ => panic!("Unsupported value for serialize"),
         }
     }
 }
