@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub enum RESPError {
     UnexpectedEnd,
-    UnknownStartingByte,
+    UnknownStartingByte(char),
     IOError(std::io::Error),
     IntParseFailure,
     BadBulkStringSize(i64),

@@ -14,7 +14,7 @@ async fn main() {
                 // No need for socket info
                 println!("Accepted new connection");
 
-                tokio::spawn(async move { handle_connection(stream) });
+                tokio::spawn(async move { handle_connection(stream).await });
             }
             Err(e) => {
                 println!("error: {}", e);

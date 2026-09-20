@@ -64,6 +64,7 @@ impl RedisValueRef {
     pub fn serialize(self) -> String {
         match self {
             RedisValueRef::String(b) => format!("+{}\r\n", String::from_utf8(b.to_vec()).unwrap()),
+            RedisValueRef::Error(b) => format!("-{}\r\n", String::from_utf8(b.to_vec()).unwrap()),
             RedisValueRef::BulkString(b) => {
                 let string = String::from_utf8(b.to_vec()).unwrap();
                 format!("${}\r\n{}\r\n", string.len(), string)
@@ -92,7 +93,7 @@ pub mod parse {
 
         memchr(b'\r', &buf[pos..]).and_then(|end| {
             if end + 1 < buf.len() {
-                Some((pos + end, BufSplit(pos, pos + end + 2)))
+                Some((pos + end + 2, BufSplit(pos, pos + end)))
             } else {
                 None
             }
@@ -189,7 +190,7 @@ pub mod parse {
             b'$' => bulk_string(buf, pos + 1),
             b':' => resp_int(buf, pos + 1),
             b'*' => array(buf, pos + 1),
-            _ => Err(RESPError::UnknownStartingByte),
+            a => Err(RESPError::UnknownStartingByte(a as char)),
         }
     }
 }

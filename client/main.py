@@ -12,8 +12,13 @@ def client():
 
     # Main loop
     while True:
-        send = str(input("Enter command: "))
-        sock.sendall(send.encode())
+        command = input("Enter command: ").split()
+        if not command:
+            continue
+
+        payload = [f"*{len(command)}\r\n"]
+        payload.extend(f"${len(argument.encode())}\r\n{argument}\r\n" for argument in command)
+        sock.sendall("".join(payload).encode())
         recv = sock.recv(1024)
         print(recv.decode())
 
