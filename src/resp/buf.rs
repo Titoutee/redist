@@ -30,7 +30,7 @@ pub enum RedisBufSplit {
     NullBulkString,
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Debug)]
 pub enum RedisValueRef {
     String(Bytes),
     Error(Bytes),
